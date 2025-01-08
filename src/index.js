@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { PORT } from "./config.js";
+import { PORT, DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT } from "./config.js";
 import db from "./db.js";
 
 
