@@ -1,0 +1,65 @@
+string related_list.Get_contratos()
+{
+// Obtener el ID del contacto actual automáticamente
+contactId = zoho.crm.getOrgVariable("currentContactId");
+if(contactId == null || contactId.isEmpty())
+{
+	return "<records><record><FL val='Error'>ID del contacto no proporcionado o está vacío</FL></record></records>";
+}
+// Obtener el registro del contacto
+contact = zoho.crm.getRecordById("Contacts",contactId);
+if(contact == null)
+{
+	return "<records><record><FL val='Error'>No se encontró el registro del contacto</FL></record></records>";
+}
+// Obtener el DNI del contacto
+dni = contact.get("N_mero_de_Documento");
+if(dni == null || dni.isEmpty())
+{
+	return "<records><record><FL val='Error'>DNI no encontrado para este contacto</FL></record></records>";
+}
+// Depuración del DNI
+info "DNI del contacto actual: " + dni;
+// Realizar la solicitud HTTP a la API externa
+api_url = "https://261e-2803-4f40-2f00-0-b415-53ec-f403-28c4.ngrok-free.app/api/pdf/" + dni;
+response = getUrl(api_url);
+// Validar la respuesta
+if(response == null || response.isEmpty())
+{
+	return "<records><record><FL val='Error'>No se recibió respuesta de la API externa</FL></record></records>";
+}
+// Depuración de la respuesta cruda
+info "Respuesta cruda de la API: " + response;
+// Analizar la respuesta JSON
+jsonResponse = response.toMap();
+if(jsonResponse == null || !jsonResponse.get("success"))
+{
+	return "<records><record><FL val='Error'>No se encontraron PDFs para este DNI</FL></record></records>";
+}
+// Obtener los datos de la API
+pdfs = jsonResponse.get("data");
+if(pdfs == null || pdfs.isEmpty())
+{
+	return "<records><record><FL val='Error'>La API no devolvió datos de PDFs</FL></record></records>";
+}
+// Construir la respuesta en formato XML
+records = "<records>";
+for each  pdf in pdfs
+{
+	file_name = pdf.get("file_name");
+	file_path = pdf.get("file_path");
+	// Validar que los datos necesarios estén presentes
+	if(file_name != null && file_path != null)
+	{
+		records = records + "<record>";
+		records = records + "<FL val='Nombre del Archivo'>" + file_name + "</FL>";
+		records = records + "<FL val='Enlace'><a href='" + file_path + "' target='_blank'>Descargar</a></FL>";
+		records = records + "</record>";
+	}
+}
+records = records + "</records>";
+// Depuración del XML generado
+info "XML generado: " + records;
+// Devolver los registros en formato XML
+return records;
+}
