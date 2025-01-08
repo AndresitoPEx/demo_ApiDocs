@@ -31,9 +31,10 @@ app.get("/api/pdf/:dni", async (req, res) => {
 });
 
 
-app.listen(PORT, () => console.log(`Servidor corriendo en puerto http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`Servidor corriendo en puerto ${PORT}`));
 
 console.log("Variables de entorno cargadas:");
+console.log("Todas las variables de entorno:", process.env);
 console.log("DB_HOST:", DB_HOST);
 console.log("DB_USER:", DB_USER);
 console.log("DB_PASSWORD:", DB_PASSWORD);
