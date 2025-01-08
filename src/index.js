@@ -12,11 +12,13 @@ app.use(express.json());
 // Ruta para obtener PDFs por DNI
 app.get("/api/pdf/:dni", async (req, res) => {
     const { dni } = req.params;
+    console.log("DNI recibido:", dni);
     try {
         const [results] = await db.execute(
             "SELECT * FROM customer_documents WHERE dni = ?",
             [dni]
         );
+        console.log("Resultados de la consulta:", results);
         if (results.length > 0) {
             res.json({ success: true, data: results });
         } else {
@@ -30,3 +32,10 @@ app.get("/api/pdf/:dni", async (req, res) => {
 
 
 app.listen(PORT, () => console.log(`Servidor corriendo en puerto http://localhost:${PORT}`));
+
+console.log("Variables de entorno cargadas:");
+console.log("DB_HOST:", DB_HOST);
+console.log("DB_USER:", DB_USER);
+console.log("DB_PASSWORD:", DB_PASSWORD);
+console.log("DB_NAME:", DB_NAME);
+console.log("DB_PORT:", DB_PORT);

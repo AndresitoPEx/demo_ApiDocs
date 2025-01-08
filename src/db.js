@@ -9,4 +9,14 @@ const pool = mysql.createPool({
   port: DB_PORT, // Puerto de tu base de datos
 });
 
+(async () => {
+  try {
+    const connection = await pool.getConnection();
+    console.log("Conexión exitosa a la base de datos.");
+    connection.release();
+  } catch (error) {
+    console.error("Error al conectar a la base de datos:", error.message);
+  }
+})();
+
 export default pool;
