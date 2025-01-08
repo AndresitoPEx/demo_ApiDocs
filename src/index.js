@@ -14,7 +14,7 @@ app.get("/api/pdf/:dni", async (req, res) => {
     const { dni } = req.params;
     try {
         const [results] = await db.execute(
-            "SELECT * FROM railway.customer_documents WHERE dni = ?",
+            "SELECT * FROM customer_documents WHERE dni = ?",
             [dni]
         );
         if (results.length > 0) {
